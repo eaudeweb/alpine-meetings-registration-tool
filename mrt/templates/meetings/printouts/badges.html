@@ -1,0 +1,111 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import render_pagination, breadcrumb %}
+
+
+{% set title = 'Print participant badges' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      ('', title),
+  ] ) }}
+
+{% endblock %}
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <h3 class="page-title">{{ title }}</h3>
+
+  <form method="GET">
+    <div class="panel panel-default">
+      <div class="panel-heading"><b>Print participant badges</b></div>
+      <div class="panel-body">
+        {{ badge_categories_form.categories(
+            class_="form-control form-reset-control select",
+            **{'data-placeholder': 'Select one or more categories' }) }}
+      </div>
+      <div class="panel-body">
+        {{ badge_categories_form.flag(
+            class_="form-control form-reset-control select") }}
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Preview</button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="printout-badge-header row">
+    <div class="col-sm-6">
+      <p>A number of <b>{{ participants.total }} badges</b> will be printed.</p>
+    </div>
+    <div class="col-sm-6 text-right">
+      {% set url = url_for('.printouts_participant_badges', categories=category_ids,
+                           flag=flag) %}
+      <form method="POST" action="{{ url }}">
+        <div class="btn-group">
+          <button class="btn btn-danger btn-sm btn-download"
+                  type="submit">
+            <span class="glyphicon glyphicon-download"></span>
+            Download as PDF
+          </button>
+          <button class="btn btn-danger btn-sm dropdown-toggle"
+                  data-toggle="dropdown">
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <button name="printout_size" class="btn btn-link"
+                      value="A4" type="submit">
+                -> in A4 format (8.3in x 11.7in)</button>
+            </li>
+          </ul>
+        </div> {# btn-group #}
+      </form>
+    </div>
+  </div> {# row #}
+
+  <table class="table table-bordered table-hover printout-badge-table">
+    <thead>
+      <tr>
+        <th class="photo"></th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Representing</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for participant in participants.items %}
+        <tr>
+          {% set url = url_for('.participant_detail',
+                               participant_id=participant.id) %}
+          <td class="text-center photo">
+            {% if participant.photo %}
+              {% set file_path = config['PATH_CUSTOM_KEY'] ~ '/' ~
+                                 participant.photo %}
+              <a href="{{ url }}" class="photo">
+                <img src="{{ file_path|crop|thumbnail('200x200')|no_image_cache }}" alt="{{ participant.name }}" width="25" height="25">
+              </a>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{{ url }}">{{ participant.name }}</a>
+          </td>
+          <td>{{ participant.category }}</td>
+          <td>{{ participant.representing }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+
+  {{ render_pagination(participants,
+                       '.printouts_participant_badges',
+                       extra={'categories': category_ids, 'flag': flag}) }}
+
+{% endblock %}

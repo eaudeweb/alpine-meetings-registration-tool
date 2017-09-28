@@ -1,0 +1,35 @@
+{% extends "meetings/participant/base/_detail.html" %}
+
+
+{% set title = participant.name %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      (url_for('meetings.media_participants'), 'Media Participants'),
+      ('', title)
+  ] ) }}
+
+{% endblock %}
+
+
+{% block content_header %}
+
+  <h3 class="page-title" style="margin: 0">{{ title }}</h3>
+
+  {% set edit_url = url_for('.media_participant_edit',
+                            participant_id=participant.id) %}
+
+  <div class="actions">
+    {% if has_perm('manage_media_participant') %}
+      <a href="{{ edit_url }}" class="btn btn-primary btn-sm"
+         id="media_participant_edit">
+        <span class="glyphicon glyphicon-pencil"></span> &nbsp;
+        Edit participant</a>
+    {% endif %}
+
+    {% include "meetings/participant/media/_actions.html" %}
+  </div> {# /actions #}
+
+{% endblock %}

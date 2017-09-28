@@ -1,0 +1,17 @@
+{% extends 'meetings/participant/base/_edit.html' %}
+
+
+{% set title = "Edit participant" if participant else "Add a new media participant" %}
+{% set disable_super = True %}
+
+
+{% block breadcrumb %}{% endblock %}
+
+
+{% block footer %}
+
+<small>
+  or <a href="{{ participant.get_absolute_url() }}">Cancel</a>
+</small>
+
+{% endblock %}

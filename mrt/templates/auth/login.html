@@ -1,0 +1,33 @@
+{% extends "auth/_layout.html" %}
+{% from "_bits.html" import flashed_messages %}
+
+{% block title %}Login{% endblock%}
+
+{% block content %}
+
+  {% if form.errors %}
+    <div class="alert alert-danger center-block">
+      Login failed</div>
+  {% endif %}
+
+  {{ flashed_messages() }}
+
+  <div class="login-box center-block">
+    <div class="login-logo">{{ config.PRODUCT_TITLE }} - Login</div>
+    <hr>
+    <div class="login-form">
+      <form method="post">
+        {{ form.csrf_token }}
+        {{ form.email(placeholder=form.email.label.text,
+                      autofocus="autofocus") }}
+        {{ form.password(placeholder=form.password.label.text) }}
+        <input type="hidden" value="{{ next or '' }}" name="next">
+        <button class="btn btn-login" type="submit">Sign in</button>
+      </form>
+      <div class="login-links text-center">
+         <a href="{{ url_for('.recover') }}">Forgot password?</a>
+      </div>
+    </div> {# login-form #}
+  </div> {# login-box #}
+
+{% endblock %}

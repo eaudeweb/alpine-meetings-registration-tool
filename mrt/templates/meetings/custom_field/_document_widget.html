@@ -1,0 +1,35 @@
+
+{% set url = url_for(
+    'files',
+    filename=config['PATH_CUSTOM_KEY'] ~ '/' ~ field.data.filename) %}
+
+<div class="file-field-container">
+  {% set show = field.data and field._use_current_file %}
+  {% if show %}
+    {% set delete_url = url_for('.custom_field_upload',
+                                participant_id=participant.id,
+                                field_slug=field.name) %}
+    {% set success_url = url_for('.participant_edit',
+                                 participant_id=participant.id) %}
+
+    <p class="current-file">
+      <label>
+      <input name="{{ field.name }}-use-current-file"
+             type="checkbox" checked="checked"
+             class="use-current-file"
+             value="{{ field.data.filename }}">
+      {{ gettext('Use the current file') }}:</label>
+      <a href="{{ url }}" target="_blank">{{ field.data.filename }}</a>
+      <small>
+        <a data-href="{{ delete_url }}"
+           data-message="Are you sure you want to delete this file?"
+           class="trash-doc glyphicon glyphicon-trash"></a>
+      </small>
+    </p>
+  {% endif %}
+
+  <div class="file-field-input" data-type="document">
+    <input type="file" name="{{ field.name }}">
+  </div>
+
+</div> {# /.file-field-container #}

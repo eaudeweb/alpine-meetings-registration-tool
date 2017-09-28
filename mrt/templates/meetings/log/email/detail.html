@@ -1,0 +1,65 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb %}
+
+
+{% set title = "Meeting (" ~ g.meeting.acronym ~ ") email" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block head %}
+
+  <style type="text/css">
+    textarea {
+      height: 200px;
+      width: 100%;
+    }
+  </style>
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      (url_for('.mail_logs'), 'Mails sent'),
+      ('', 'Mail log #' ~ mail.id)
+  ] ) }}
+
+{% endblock %}
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <h3 class="page-title">Mail log #{{ mail.id }}</h3>
+
+  <table class="table table-bordered">
+
+    <tr>
+      <th>To</th>
+      <td>{{ mail }}</td>
+    </tr>
+
+    <tr>
+      <th>Subject</th>
+      <td>{{ mail.subject }}</td>
+    </tr>
+
+    <tr>
+      <td colspan="2">{{ mail.message|escape|nl2br }}</td>
+    </tr>
+
+  </table>
+
+  <div class="form-actions row">
+    <div class="col-sm-6">
+      <form action="{{ url_for('.mail_resend', mail_id=mail.id) }}" method="post">
+        <button type="submit" class="btn btn-primary">Resend</button>
+        <small>or <a href="{{ url_for('.mail_logs', meeting_id=g.meeting.id) }}">Cancel</a></small>
+      </form>
+    </div>
+  </div>
+
+{% endblock %}

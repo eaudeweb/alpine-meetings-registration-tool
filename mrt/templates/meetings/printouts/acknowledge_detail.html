@@ -1,0 +1,83 @@
+{% extends "_layout_pdf.html" %}
+
+
+{% block head %}
+
+  <style type="text/css">
+    {{ inject_static_file('css/printouts.css') }}
+  </style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="highlight highlight-border highlight-pad" >
+  <h4><b>Registration No. {{ participant.id }}</b></h4>
+</div>
+
+<div class="text-center">
+  <h2 style="margin-bottom: 20px;">{{ g.meeting|clean_html(tags='sup') }}</h2>
+</div>
+
+<div class="highlight highlight-border highlight-pad text-center">
+  <h3><em>{{ gettext('Details of registration') }} - {{ participant.category }}</em></h3>
+</div>
+
+<table class="table">
+
+  <tr>
+    <td class="text-right col-sm-4 noborder"><b><em>Name</em></b></td>
+    <td class="col-sm-6 noborder pad-left">
+      {{ participant.name }} <br/>
+      {% if participant.represented_organization %}
+        {{ participant.represented_organization }} <br/>
+      {% endif %}
+
+      {{ participant.country }} <br/>
+      {{ participant.email }}
+    </td>
+  </tr>
+
+  <tr>
+    <td class="text-right">
+      <b><em>{{ gettext('Category') }}</em></b>
+    </td>
+    <td class="pad-left">{{ participant.category }}</td>
+  </tr>
+
+  <tr>
+    <td class="text-right">
+      <b><em>{{ gettext('Representative of') }}</em></b>
+    </td>
+    <td class="pad-left">{{ participant.representing|default('') }}</td>
+  </tr>
+
+  <tr>
+    <td class="text-right">
+      <b><em>{{ gettext('Working language') }}</em></b>
+    </td>
+    <td class="pad-left">{{ participant.language.value }}</td>
+  </tr>
+
+  <tr>
+    <td class="text-right">
+      <b><em>{{ gettext('Country represented') }}</em></b>
+    </td>
+    <td class="pad-left">
+      {% if participant.represented_country %}
+        {{ participant.represented_country }}
+      {% else %}
+      {% endif %}
+    </td>
+  </tr>
+
+  <tr>
+    <td class="text-right">
+      <b><em>{{ gettext('Representing region') }}</em></b>
+    </td>
+    <td class="pad-left">{{ participant.represented_region|default('') }}</td>
+  </tr>
+
+</table>
+{% endblock %}

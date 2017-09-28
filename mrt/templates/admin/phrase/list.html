@@ -1,0 +1,49 @@
+{% extends "_layout.html" %}
+{% from "_bits.html" import breadcrumb %}
+
+
+{% block title %}Default Phrases{% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [('', 'Default Phrases')] ) }}
+
+{% endblock %}
+
+
+{% block content %}
+
+  <div class="page-header">
+    <h2>Default Phrases</h2>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="table-responsive">
+        <table class="table table-bordered table-condensed">
+          <thead>
+            <tr>
+              <th>Meeting Type</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for abbr, name in meeting_types %}
+              {% set url = url_for('.phrase_edit', meeting_type=abbr) %}
+              <tr>
+                <td><a href="{{ url }}">{{ name }} Phrases</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div> {# table-responsive #}
+    </div>
+    <div class="col-sm-6">
+      <h4 class="page-title">Default Phrases<br>
+        <small>Every meeting type has its own default phrases. When a new meeting type is added, blank default phrases are added for that meeting type.</small>
+      </h4>
+    </div>
+  </div> {# row #}
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% from "_bits.html" import form_group %}
+{% from "meetings/rule/_bits.html" import render_action %}
+
+
+<div class="panel panel-default">
+
+  <div class="panel-heading"><b>Actions</b></div>
+
+  <div class="panel-body">
+
+    {% if form.actions.errors %}
+      <div class="alert alert-danger">
+        {{ form.actions.errors[0] }}
+      </div>
+    {% endif %}
+
+    <div id="actions-container" class="rule-container">
+      {% for action in form.actions %}
+        {{ render_action(action, loop) }}
+      {% endfor %}
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-8">
+        <a class="rule-add rule-add-action"
+           data-from="#default-actions-form"
+           data-to="#actions-container"><small>
+            <span class="glyphicon glyphicon-plus"></span>
+            Add a new action</small>
+        </a>
+      </div>
+    </div>
+
+  </div> {# panel-body #}
+
+</div> {# actions #}

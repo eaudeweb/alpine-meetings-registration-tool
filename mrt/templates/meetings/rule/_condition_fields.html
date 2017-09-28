@@ -1,0 +1,30 @@
+{% from "_bits.html" import form_group %}
+{% from "meetings/rule/_bits.html" import render_condition %}
+
+
+<div class="panel panel-default">
+
+  <div class="panel-heading"><b>Conditions (match all)</b></div>
+
+  <div class="panel-body">
+
+    <div id="conditions-container" class="rule-container"
+         data-url="{{ url_for('.rules_data', rule_type=g.rule_type) }}">
+      {% for condition in form.conditions %}
+        {{ render_condition(condition, loop) }}
+      {% endfor %}
+    </div> {# conditions-container #}
+
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-8">
+        <a class="rule-add" data-from="#default-condition-form"
+           data-to="#conditions-container">
+           <small><span class="glyphicon glyphicon-plus"></span>
+           Add a new condition</small>
+        </a>
+      </div>
+    </div> {# form-group #}
+
+  </div> {# panel-body #}
+
+</div> {# conditions #}

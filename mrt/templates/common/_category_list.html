@@ -1,0 +1,67 @@
+
+{% if categories.count() %}
+
+  <div class="category-container">
+
+    <div class="table-responsive">
+
+      <table id="categories" class="table table-bordered table-condensed sortable table-hover"
+          data-url="{{ url_for('.category_update_position') }}">
+
+        <thead>
+          <tr>
+            <th class="handler"></th>
+            <th>Name</th>
+            <th>Category Type</th>
+            <th>Category Group</th>
+            <th>Badge color</th>
+            {% if default %}
+              <th>Meeting Types</th>
+            {% endif %}
+            <th>Registration</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for category in categories %}
+            {% set url = url_for('.category_edit', category_id=category.id) %}
+            <tr id="items-{{ category.id }}">
+              <td class="handler">
+                <span class="glyphicon glyphicon-align-justify"></span>
+              </td>
+              <td>
+                <a href="{{ url }}">{{ category.title.english }}</a>
+              </td>
+              <td>{{ category.category_type }}</td>
+              <td>{{ category.group }}</td>
+              <td>
+                <span class="stripe" style="background: {{ category.color }}"></span>
+                <span class="color">{{ category.color }}</span>
+              </td>
+              {% if default %}
+                <td>
+                  <ul class="list-unstyled">
+                    {% for meeting_type in category.meeting_types %}
+                      <li>- {{ meeting_type.slug }}</li>
+                    {% endfor %}
+                  </ul>
+                </td>
+              {% endif %}
+
+              <td class="text-center" style="width: 60px;">
+                {% if category.visible_on_registration_form %}
+                  <span class="glyphicon glyphicon-ok"></span>
+                {% endif %}
+              </td>
+
+            </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+
+    </div> {# table-responsive #}
+
+  </div> {# category-container #}
+
+{% endif %}

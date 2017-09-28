@@ -1,0 +1,37 @@
+{% extends "_layout.html" %}
+{% from "_bits.html" import breadcrumb %}
+{% from "common/_category_color.html" import head, scripts %}
+
+{% set title = "Edit category" if category else "Add a new default category" %}
+
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      (url_for('.categories'), 'Default Categories'),
+      ('', title)]
+  ) }}
+
+{% endblock %}
+
+
+{% block head %} {{ head() }} {% endblock %}
+
+
+{% block content %}
+
+  <div class="page-header">
+    <h2>{{ title }}</h2>
+  </div>
+
+  <div class="category-container">
+    {% include "common/_category_edit.html" %}
+  </div> {# category-container #}
+
+{% endblock %}
+
+
+{% block scripts %} {{ scripts(colors) }} {% endblock %}

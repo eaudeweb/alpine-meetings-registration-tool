@@ -1,0 +1,120 @@
+{% extends "meetings/registration/_base.html" %}
+{% from "_bits.html" import form_group, flashed_messages %}
+
+
+{% block head %}
+  <meta id='max-upload-size' data-bytes="{{ config.MAX_UPLOAD_SIZE }}">
+  <meta id='max-file-size' data-bytes="{{ config.MAX_FILE_SIZE }}">
+{% endblock %}
+
+
+{% block scripts %}
+
+  <script>
+    $(function () {
+
+      $('.picker').datetimepicker({pickTime: false});
+
+      $('.use-current-file').on('change', function () {
+        var is_checked = $(this).prop('checked');
+        var parents = $(this).parents('.file-field-container');
+        if(is_checked) {
+          parents.find('.file-field-input').removeClass('show');
+        } else {
+          parents.find('.file-field-input').addClass('show');
+        }
+      }).change();
+
+      // move country represented field and organisation represented field
+      // to category
+      var category = $('#category_id');
+      $('#represented_country').parents('.form-group').appendTo(
+        category.find('[class=group-country]'));
+      $('#represented_organization').parents('.form-group').appendTo(
+        category.find('[class=group-organization]'));
+    });
+  </script>
+
+{% endblock %}
+
+
+{% block content %}
+
+  {{ flashed_messages() }}
+
+  {% if g.meeting.login_button_visible %}
+    <div class="text-right" style="margin-bottom: 15px;">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('meetings.registration_user_logout') }}">
+          {{ gettext('Logout') }}
+        </a>
+      {% else %}
+        <a href="{{ url_for('meetings.registration_user_login', next=request.path) }}" class="btn btn-default">
+          {{ gettext('Login and pre-fill the registration form') }}
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {% if header_phrase.description %}
+    {% set product_logo = get_logo('PRODUCT_LOGO') %}
+    {% set product_side_logo = get_logo('PRODUCT_SIDE_LOGO') %}
+
+  <div class="product-container">
+    <div class="product-logo hidden-xs">
+      <img src="{{ product_logo.url }}" width="60" alt="">
+    </div>
+    <div class="product-side-logo hidden-xs">
+      <img src="{{ product_side_logo.url }}" width="60" alt="">
+    </div>
+    <div class="title text-center">
+      <h4>{{ header_phrase.description[g.language_verbose]
+               |nl2br|clean_html(tags='sup') }}</h4>
+    </div>
+  </div>
+  {% endif %}
+
+  <form method="POST" class="form-horizontal"
+        enctype="multipart/form-data">
+    {{ form._fields['ts_'] }}
+    {% for field in form.exclude([CustomField.EVENT]) %}
+      {{ form_group(field, label_size="2", input_size="10") }}
+    {% endfor %}
+
+    {% if form.has(CustomField.EVENT) %}
+      {% set events = form.filter([CustomField.EVENT]) %}
+      <div class="form-group">
+          <label class="col-sm-2">{{ gettext("I would also like to attend") }}</label>
+        <div class="col-sm-10">
+          {% for field in events %}
+            {{ field() }}
+            <label>{{ field.label.text }}</label>
+            <div class="help-block">
+              {{ field.description|clean_html(attributes={'a': ['href', 'target']}) }}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if footer_phrase.description %}
+    <div class="row">
+      <div class="col-sm-10 col-sm-push-2">
+        <p><small>
+          {{ footer_phrase.description[g.language_verbose]|nl2br }}
+        </small></p>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="form-actions row">
+      <div class="col-sm-4 col-sm-push-2">
+        <button type="submit" class="btn btn-primary">
+          {{ gettext('Submit') }}
+        </button>
+      </div>
+    </div>
+
+  </form>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.label-container {
+    position: absolute;
+    font-size: 9pt;
+    height: 5.2cm;
+    top: 0.25in;
+    left: 2.362in;
+    right: 1.181in;
+    width: 8cm;
+}
+.label-container ul li {
+    padding-bottom: 0.070in;
+}
+
+
+
+
+
+

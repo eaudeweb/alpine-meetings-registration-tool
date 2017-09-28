@@ -1,0 +1,40 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb %}
+{% from "common/_category_color.html" import head, scripts %}
+
+
+{% set title = "Edit meeting (" ~ g.meeting.acronym ~ ") category" %}
+
+{% include "common/_category_color.html"%}
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      (url_for('meetings.categories'), 'Categories'),
+      ('', title),
+  ] ) }}
+
+{% endblock %}
+
+
+{% block head %} {{ head() }} {% endblock %}
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <h3 class="page-title">{{ title }}</h3>
+
+  <div class="category-container">
+    {% include "common/_category_edit.html" %}
+  </div> {# category-container #}
+
+
+{% endblock %}
+
+
+{% block scripts %} {{ scripts(colors) }} {% endblock %}

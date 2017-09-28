@@ -1,0 +1,162 @@
+{% extends "_layout.html" %}
+{% from "_bits.html" import breadcrumb, form_group, render_pagination %}
+
+
+{% block title %}Users{% endblock %}
+
+{% block head %}
+
+  <style type="text/css">
+    .options {
+      display: none;
+    }
+    .table td {
+      vertical-align: middle!important;
+    }
+
+    .table tr:hover .options {
+      display: block;
+    }
+    .current-user .toggle {
+      display: none;
+    }
+    .form-inline {
+      margin-bottom: 15px;
+    }
+  </style>
+
+{% endblock %}
+
+{% block scripts %}
+
+  <script>
+    $(function () {
+
+      $('[data-toggle=enable]').on('click', function () {
+        var url = $(this).data('href');
+        var row = $(this).parents('tr');
+        var icon = row.find('.user-active');
+        var button = $(this);
+          $.post(url, function (resp) {
+            row.effect('highlight');
+            if (icon.hasClass('glyphicon-ok')) {
+              icon.removeClass('glyphicon-ok')
+                  .addClass('glyphicon-minus');
+              button.text(button.data('enable'));
+            }
+            else {
+              icon.removeClass("glyphicon-minus").addClass("glyphicon-ok");
+              button.text(button.data("disable"));
+            }
+          });
+      });
+
+      $('[data-toggle=reset]').on('click', function () {
+        if(confirm('Are you sure you want to reset the password for this user?')) {
+          var url = $(this).data('href');
+          $.post(url).done(function (resp) {
+            window.location.replace(resp.url);
+          });
+        }
+      });
+
+
+      $('#users').dataTable({
+        'order': [],
+        'columnDefs': [
+          { 'orderable': false, 'targets': 2 },
+          { 'orderable': false, 'targets': 3 },
+        ]
+      });
+
+    });
+  </script>
+
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [('', 'Users')] ) }}
+
+{% endblock %}
+
+
+{% block content %}
+
+  <div class="page-header">
+    <h2>Users</h2>
+  </div>
+
+  <h5 style="margin-top: 25px;">
+    <b>List of users. On the actions column, you can reset the password and disable the account</b>
+  </h5>
+
+  <div class="table-responsive">
+
+    <table id="users" class="table table-bordered table-condensed">
+
+      <thead>
+        <tr>
+          <th class="col-sm-3">Email</th>
+          <th class="col-sm-3">Staff</th>
+          <th class="col-sm-2 text-center">Active</th>
+          <th class="col-sm-2 text-center">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        {% for user in users %}
+
+          <tr class="{{ 'current-user bg-info' if current_user == user }}">
+
+            <td>
+              {% set url = url_for('.user_detail', user_id=user.id) %}
+              <a href="{{ url }}">{{ user.email }}</a>
+            </td>
+
+            <td class="text-center">
+              {% if user.staff %}
+              <span class="glyphicon glyphicon-ok"></span>
+              <span class="hidden"> staff </span>
+              {% else %}
+                <span class="glyphicon glyphicon-minus"></span>
+              {% endif %}
+            </td>
+
+            <td class="text-center">
+              {% if user.active %}
+              <span class="user-active glyphicon glyphicon-ok"></span>
+              {% else %}
+                <span class="user-active glyphicon glyphicon-minus"></span>
+              {% endif %}
+            </td>
+
+            <td class="text-center">
+              <div class="options">
+                <small>
+                  <a data-href="{{ url_for('admin.user_edit', user_id=user.id) }}" data-toggle="reset">Reset Password</a>
+                </small>&nbsp;
+
+                {% set text = 'Disable' if user.active else 'Enable' %}
+                {% set url = url_for('admin.user_toggle', user_id=user.id) %}
+                <small class="toggle"><a data-toggle="enable"
+                       data-enable="Enable"
+                       data-disable="Disable"
+                       data-href="{{ url }}">{{ text }}</a>
+                </small>
+              </div>
+            </td>
+
+          </tr>
+
+        {% endfor %}
+      </tbody>
+
+    </table>
+
+  </div> {# table-responsive #}
+
+{% endblock %}

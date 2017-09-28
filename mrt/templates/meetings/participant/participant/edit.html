@@ -1,0 +1,41 @@
+{% extends 'meetings/participant/base/_edit.html' %}
+
+{% set title = "Edit participant" if participant else "Add a new participant" %}
+{% set search_default_url = url_for('.default_participant_search') %}
+
+{% block breadcrumb %}
+
+  {% if participant  %}
+    {{ breadcrumb( [
+        (url_for('.participants'), 'Participants'),
+        (url_for('.participant_detail', participant_id=participant.id), participant),
+        ('', 'Edit')
+    ] ) }}
+  {% else %}
+   {{ breadcrumb( [
+        (url_for('.participants'), 'Participants'),
+        ('', title)
+    ] ) }}
+  {% endif %}
+
+{% endblock %}
+
+
+{% block footer %}
+
+<small>
+  or
+  {% if participant %}
+    {% set url = url_for('.participant_detail',
+                         participant_id=participant.id) %}
+  {% else %}
+    {% set url = url_for('.participants') %}
+  {% endif %}
+  <a href="{{ url }}">Cancel</a>
+</small>
+
+{% endblock %}
+
+{% assets "showif" %}
+  <script src="{{ ASSET_URL }}"></script>
+{% endassets %}

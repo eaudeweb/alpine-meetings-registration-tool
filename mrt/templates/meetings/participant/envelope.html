@@ -1,0 +1,51 @@
+{% extends "_layout_pdf.html" %}
+
+
+{% block head %}
+
+  <style type="text/css">
+    {{ inject_static_file('css/envelope.css') }}
+  </style>
+
+{% endblock %}
+
+
+{% block content %}
+
+  <div class="envelope-container">
+
+    <div class="participant-container">
+      <ul class="list-unstyled">
+        <li>{{ participant.name }}</li>
+
+        {% if participant.representing %}
+        <li>{{ participant.representing|safe }}</li>
+        {% endif %}
+
+        {% if participant.address_value %}
+        <li>{{ participant.address_value }}</li>
+        {% endif %}
+
+        <li>
+          {{ participant.country|country_in('en') }} /
+          {{ participant.country|country_in('fr') }} /
+          {{ participant.country|country_in('es') }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="secretariat-container">
+      {% set product_logo = get_logo('PRODUCT_LOGO') %}
+      {% set product_side_logo = get_logo('PRODUCT_SIDE_LOGO') %}
+      <img src="{{ product_logo.url }}" class="logo" alt="" >
+      <img src="{{ product_side_logo.url }}" class="side-logo" alt="">
+      <address>
+        {{ g.meeting.venue_address }}<br>
+        {{ g.meeting.venue_city }}<br>
+        {{ g.meeting.venue_country }}<br>
+      </address>
+    </div>
+
+  </div>
+
+{% endblock %}

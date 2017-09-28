@@ -1,0 +1,120 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb,
+                            form_group, form_group_with_list_inputs %}
+
+
+{% if custom_field %}
+  {% set title = "Edit Field" %}
+{% else %}
+  {% set title = "Add Field" %}
+{% endif %}
+
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block scripts %}
+
+<script>
+  $(function() {
+    var required = $('#required').parents('.form-group');
+    var choices = $('#custom_field_choices').parents('.form-group');
+    choices.find('select').select2({ tags: true });
+    $('#field_type').on('change', function() {
+      $(this).val() == 'event' ?  required.hide() : required.show();
+      if($(this).val() == 'multi_checkbox' || $(this).val() == 'radio') {
+        choices.show();
+        choices.find('input').focus();
+      } else {
+        choices.hide();
+      }
+    }).change();
+  });
+</script>
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      (url_for('.custom_fields'), 'Fields'),
+      ('', title)
+  ] ) }}
+
+{% endblock %}
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <h3 class="page-title">{{ title }}</h3>
+
+  <form method="post" class="form-horizontal">
+
+    <div class="panel panel-default">
+      <div class="panel-heading"><b>General</b></div>
+
+      <div class="panel-body">
+
+        {{ form_group_with_list_inputs(form.label) }}
+
+        <div class="form-group">
+          <label class="col-sm-2 control-label">
+            {{ form.hint.label.text }}
+          </label>
+
+          <div class="col-sm-8">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                {% for hint in form.hint.translations %}
+                  {{ form_group(hint) }}
+                {% endfor %}
+              </div>
+            </div> {# panel #}
+          </div>
+        </div> {# form-group #}
+
+        <div class="{% if custom_field and custom_field.is_primary %}hide{% endif %}">
+          {{ form_group(form.field_type) }}
+
+          {% if form.custom_field_choices.flags.disabled %}
+            {% set options = {'disabled': ''} %}
+          {% else %}
+            {% set options = {} %}
+          {% endif %}
+
+          {{ form_group(form.custom_field_choices, options=options) }}
+        </div>
+
+        <div class="{% if custom_field and custom_field.is_protected %}hide{% endif %}">
+          {{ form_group(form.required, input_size="3") }}
+
+          {{ form_group(form.visible_on_registration_form, input_size="3") }}
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-actions row">
+      <div class="col-sm-6">
+        <button type="submit" class="btn btn-primary">
+          Save changes</button>
+        <small>or
+        <a href="{{ url_for('.custom_fields') }}">Cancel</a></small>
+      </div>
+      {% if custom_field and not custom_field.is_primary %}
+        <div class="col-sm-6 text-right">
+          <a class="delete" data-toggle="delete"
+             data-href="{{ url_for('.custom_field_edit', custom_field_id=custom_field.id) }}"
+             data-message="Are you sure you want to delete this custom field?">
+            <span class="glyphicon glyphicon-remove"></span>
+            Delete this custom field</a>
+        </div>
+      {% endif %}
+    </div>
+
+  </form>
+
+{% endblock %}

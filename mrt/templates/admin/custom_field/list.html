@@ -1,0 +1,49 @@
+{% extends "_layout.html" %}
+
+{% from "_bits.html" import breadcrumb, actions %}
+{% from "meetings/custom_field/_bits.html" import render_fields %}
+
+
+{% block title %} Default Custom Fields {% endblock %}
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [('', 'Default Custom Fields')] ) }}
+
+{% endblock %}
+
+
+{% block content %}
+
+  <div class="page-header">
+    <h2>Default Custom Fields</h2>
+  </div>
+
+  <div role="tabpanel">
+
+    <ul class="nav nav-tabs" id="nav_tabs">
+      <li class="active">
+        <a href="#participant" data-toggle="tab">Participant fields</a>
+      </li>
+      <li>
+        <a href="#media" data-toggle="tab">Media participant fields</a>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+
+      <div role="tabpanel" class="tab-pane active" id="participant">
+        {{ render_fields(custom_fields, default=True) }}
+        {{ actions(Participant.PARTICIPANT)}}
+      </div>
+
+      <div role="tabpanel" class="tab-pane" id="media">
+        {{ render_fields(custom_fields_for_media, default=True) }}
+        {{ actions(Participant.MEDIA)}}
+      </div>
+
+    </div> {# tab-content #}
+
+  </div> {# tabpanel #}
+
+{% endblock %}

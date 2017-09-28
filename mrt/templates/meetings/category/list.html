@@ -1,0 +1,47 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb %}
+
+
+{% set title = "Categories" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      ('', 'Categories')
+  ] ) }}
+
+{% endblock %}
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <h3 class="page-title">{{ title }}</h3>
+
+  <form role="form" method="post" class="meeting-add-category-form">
+
+    <div class="row">
+      <div class="col-sm-12">
+        {{ form.categories(class_="form-control form-reset-control select",
+          **{"data-placeholder": "Select one or more categories from the defaults."}) }}
+        {% if form.errors %}
+          <div class="text-danger">
+            <small>{{ form.categories.errors[0] }}</small></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        Add categories to this meeting</button>
+    </div>
+
+  </form>
+
+  {% include "common/_category_list.html"  %}
+
+{% endblock %}

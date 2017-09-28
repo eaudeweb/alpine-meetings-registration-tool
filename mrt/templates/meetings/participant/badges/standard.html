@@ -1,0 +1,36 @@
+{% set language = participant.lang or config.DEFAULT_LANG %}
+
+<div class="badge-container">
+
+  <div class="badge-header">
+    {% if g.meeting.badge_header %}
+      {{ g.meeting.badge_header[language]|clean_html(tags='sup') }}
+    {% else %}
+      {{ g.meeting.title[language]|clean_html(tags='sup') }}
+    {% endif %}
+  </div> {# badge-container #}
+
+  <div class="content">
+    <h1>{{ participant.name_on_badge }}</h1>
+    <h2>{{ participant.representing|safe }}</h2>
+  </div> {# content #}
+
+  <div class="address">
+    <p>
+      <span class="date">
+        {{ date_processor(g.meeting.date_start, g.meeting.date_end) }},
+      </span>
+      {{ g.meeting.venue_city.english }} ({{ g.meeting.venue_country }})
+    </p>
+    {% if g.meeting.venue_address %}
+      <p>{{ g.meeting.venue_address }}</p>
+    {% endif %}
+  </div> {# #}
+
+ <div class="stripe {% if nostripe %}nostripe{% endif %}"
+       style="background: {{ participant.category.color }}">
+
+    {{ participant.category }}
+  </div>
+
+</div> {# badge-container #}

@@ -1,0 +1,69 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb, render_pagination %}
+
+
+{% set title = 'Processing file list' %}
+
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      ('', title),
+  ] ) }}
+
+{% endblock %}
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <h3 class="page-title">{{ title }}</h3>
+  <p><em>All files will be deleted after one month.</em></p>
+
+  <table id="job-list" class="table table-bordered table-condesed"
+         data-job-status-url="{{ url_for('.printouts_job_status') }}">
+
+    <thead>
+      <tr>
+        <th>JobId</th>
+        <th>Name</th>
+        <th>User</th>
+        <th>Meeting</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for job in jobs.items %}
+        <tr class="{% if job.is_finished %}success{% endif %}
+                   {% if job.is_failed %}danger{% endif %}
+                   {% if job.is_started %}active{% endif %} job"
+            id="{{ job.id }}">
+          <td class="jobid">{{ job.id }}</td>
+          <td>{{ job.name|title }}</td>
+          <td>{{ job.user }}</td>
+          <td>{{ job.meeting|clean_html(tags='sup') }}</td>
+          <td>{{ job.date.strftime('%d.%m.%Y %H:%M') }}</td>
+          <td class="status">{{ job.status }}</td>
+          <td class="result">
+            {% if job.result %}
+              <a href="{{ job.result }}">Download file</a>
+            {% else %}
+              -
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
+
+  {{ render_pagination(jobs, '.processing_file_list') }}
+
+{% endblock %}

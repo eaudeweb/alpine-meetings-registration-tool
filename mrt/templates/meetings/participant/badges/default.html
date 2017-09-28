@@ -1,0 +1,42 @@
+{% set language = participant.lang or config.DEFAULT_LANG %}
+
+<div class="badge-container">
+
+  <div class="stripe {% if nostripe %}nostripe{% endif %}"
+       style="background: {{ participant.category.color }}">
+    <h1>
+      {% if g.meeting.badge_header %}
+        {{ g.meeting.badge_header[language]|clean_html(tags='sup') }}
+      {% else %}
+        {{ g.meeting.title[language]|clean_html(tags='sup') }}
+      {% endif %} <br>
+      {{ date_processor(g.meeting.date_start, g.meeting.date_end,
+                        out_format='d MMM yyyy') }},
+      {{ g.meeting.venue_city.english }}, {{ g.meeting.venue_country }}
+    </h1>
+    <img src="{{ badge_context['product_logo'].url }}" class="logo" alt="">
+    <img src="{{ badge_context['product_side_logo'].url }}"
+         class="side-logo" alt="">
+  </div> {# stripe #}
+
+  <div class="content">
+    {% if badge_context['participant_photo'] %}
+      <img src="{{ badge_context['participant_photo'] }}" alt=""
+           class="photo">
+    {% endif %}
+    <div class="description">
+      <h2>
+       {{ participant.name_on_badge }}
+        <small>{{ participant.representing|safe }}</small>
+      </h2>
+    </div> {# description #}
+
+    {% if badge_context['background'] %}
+      <div class="background">
+        <img src="{{ badge_context['background'] }}" alt="" />
+      </div>
+    {% endif %}
+
+  </div> {# content #}
+
+</div> {# container #}

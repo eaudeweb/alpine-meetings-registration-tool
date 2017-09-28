@@ -1,0 +1,60 @@
+{% from "_bits.html" import meeting_title_for_printouts %}
+
+
+<div class="printout-doc-title">
+  <h4>{{ meeting_title_for_printouts() }}</h4>
+  <h2>{{ title }} - Total: {{ count }}</h2>
+  {% if flag %}<h3>{{ flag|capitalize }}</h3>{% endif %}
+</div>
+
+
+<div class="printout-item-container">
+
+  <table class="table table-bordered table-condensed">
+
+      <thead>
+        <tr class="column-headers">
+          <th class="text-center">Pic</th>
+          <th>Representing</th>
+          <th>Name</th>
+          <th class="text-right">Language</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        {% for group, list in participants %}
+
+          <tr class="highlight">
+            <th colspan="4" class="text-center"
+                data-id="{{ group.title.english|slugify }}">
+              {{ group }}</th>
+          </tr>
+
+          {% for participant in list %}
+            <tr>
+              <td class="text-center" style="width: 5%;">
+              {% if participant.photo %}
+                <span class="checked">✔</span>
+              {% else %}
+                <span class="checked">&#45;&#45;</span>
+              {% endif %}
+              </td>
+              <td style="width: 20%;">
+                {{ participant.representing|safe }}</td>
+              <td id="participant-name" data-id="{{ participant.id }}">
+                {{ participant.last_name|upper }}
+                {{ participant.first_name }}
+              </td>
+              <td class="text-right" style="width: 45%">
+                {{ participant.language }}</td>
+            </tr>
+          {% endfor %}
+
+        {% endfor %}
+
+      </tbody>
+
+  </table>
+
+</div> {# printout-item-container #}

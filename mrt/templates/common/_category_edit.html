@@ -1,0 +1,115 @@
+{% from "_bits.html" import form_group %}
+
+<form class="form-horizontal" role="form" method="POST"
+      enctype="multipart/form-data">
+
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+      <b>Category tags</b>
+    </div>
+
+    <div class="panel-body">
+      {{ form.category_tags(class_="form-control form-reset-control select",
+        **{"data-placeholder": "Select category tags for this default category"}) }}
+      {% if form.category_tags.errors %}
+        <div class="text-danger"><small>{{ form.category_tags.errors[0] }}</small></div>
+      {% endif %}
+    </div>
+
+  </div> {# panel #}
+
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+      <b>{{ form.title.label.text }}</b>
+    </div>
+
+    <div class="panel-body">
+      {% for translation in form.title.translations %}
+        {% if loop.first %}
+          {{ form_group(translation, options={'autofocus':''}) }}
+        {% else %}
+          {{ form_group(translation) }}
+        {% endif %}
+      {% endfor %}
+    </div> {# panel-body #}
+
+  </div> {# panel #}
+
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+      <b>Badges</b>
+    </div>
+
+    <div class="panel-body">
+      {{ form_group(form.color, label_size="2", input_size="3") }}
+      {{ form_group(form.representing, label_size="2", input_size="4") }}
+      {{ form_group(form.background) }}
+      {% if form.background.data and not form.background.data.filename %}
+        <div class="checkbox">
+          {% set url = url_for("files",
+              filename="backgrounds/" ~ form.background.data) %}
+          <a href="{{ url }}" target="_blank">
+            {{ form.background.data }}</a>
+          <label>
+            {{ form.background_delete() }}
+            <small>Delete this file?</small></label>
+        </div>
+      {% endif %}
+    </div>
+
+  </div> {# panel #}
+
+  <div class="panel panel-default">
+
+    <div class="panel-heading">
+      <b>Registration Form</b>
+    </div>
+
+    <div class="panel-body">
+      {{ form_group(form.category_type, label_size="2", input_size="4") }}
+      {{ form_group(form.group, label_size="2", input_size="4") }}
+      {{ form_group(form.visible_on_registration_form, label_size="2", input_size="4") }}
+    </div>
+
+  </div> {# panel #}
+
+  {% if form.meeting_type_slugs %}
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        <b>Meeting types</b>
+      </div>
+
+      <div class="panel-body">
+        {{ form.meeting_type_slugs(class_="form-control form-reset-control select",
+          **{"data-placeholder": "Select meeting types for this default category"}) }}
+        {% if form.meeting_type_slugs.errors %}
+          <div class="text-danger"><small>{{ form.meeting_type_slugs.errors[0] }}</small></div>
+        {% endif %}
+      </div>
+
+    </div> {# panel #}
+  {% endif %}
+
+  <div class="form-actions row">
+    <div class="col-sm-6">
+      <button type="submit" class="btn btn-primary">
+        Save changes</button>
+      <small>or <a href="{{ url_for('.categories') }}">
+        Cancel</a></small>
+    </div>
+    {% if category %}
+      <div class="col-sm-6 text-right">
+        <a class="delete" data-toggle="delete"
+           data-href="{{ url_for('.category_edit', category_id=category.id) }}"
+           data-message="Are you sure you want to delete this category?">
+          <span class="glyphicon glyphicon-remove"></span>
+          Delete this category</a>
+      </div>
+    {% endif %}
+  </div> {# form-actions #}
+
+</form>

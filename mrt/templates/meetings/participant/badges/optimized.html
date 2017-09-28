@@ -1,0 +1,35 @@
+{% set language = language or config.DEFAULT_LANG %}
+
+<div class="badge-container">
+
+  <div class="content">
+    <h1>
+      {{ participant.name_on_badge }}
+    </h1>
+  </div> {# content #}
+
+  <div class="representing">
+    {{ participant.representing|safe }}
+  </div>
+
+  <div class="footer">
+    <div class="meeting-title">
+      {% if g.meeting.badge_header %}
+        {{ g.meeting.badge_header[language]|clean_html(tags='sup') }}
+      {% else %}
+        {{ g.meeting.title[language]|clean_html(tags='sup') }}
+      {% endif %}
+      &#8226;
+      {{ g.meeting.date_start.strftime('%d.%m.%Y') }}
+      &#8226;
+      {{ g.meeting.venue_city.english }}
+    </div>
+
+    <div class="stripe {% if nostripe %}nostripe{% endif %}"
+         style="background: {{ participant.category.color }}">
+      {{ participant.category }}
+    </div>
+
+  </div> {# footer #}
+
+</div> {# badge-container #}

@@ -1,0 +1,13 @@
+{% from "_bits.html" import custom_fields_box_view, event_fields_box_view %}
+
+{% if form.has(CustomField.IMAGE)%}
+  <h5>Photo Files</h5>
+
+  {% for field in form.filter([CustomField.IMAGE]) %}
+    {% include "meetings/participant/_image_widget.html" %}
+  {% endfor %}
+{% endif %}
+
+{{ custom_fields_box_view(form, CustomField.CHECKBOX, 'Flags')}}
+
+{{ event_fields_box_view(form, CustomField.EVENT, 'Events')}}

@@ -1,0 +1,33 @@
+{% extends "_layout_pdf.html" %}
+
+
+{% block head %}
+
+  <style type="text/css">
+    {{ inject_static_file('css/label.css') }}
+  </style>
+
+{% endblock %}
+
+{% block content %}
+
+  <div class="label-container">
+
+    <ul class="list-unstyled">
+      <li>{{ participant.name }}</li>
+      {% if participant.representing %}
+      <li>{{ participant.representing|safe }}</li>
+      {% endif %}
+      {% if participant.address_value %}
+      <li>{{ participant.address_value }}</li>
+      {% endif %}
+      <li>
+        {{ participant.country|country_in('en') }} /
+        {{ participant.country|country_in('fr') }} /
+        {{ participant.country|country_in('es') }}
+      </li>
+    </ul>
+
+  </div>
+
+{% endblock %}

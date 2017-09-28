@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    <style type="text/css">
+      {{ inject_static_file('css/bootstrap.min.css') }}
+      {{ inject_static_file('css/bootstrap-theme.min.css') }}
+    </style>
+
+    {% block head %}{% endblock %}
+  </head>
+
+  <body>
+    {% block content %}{% endblock %}
+  </body>
+
+</html>

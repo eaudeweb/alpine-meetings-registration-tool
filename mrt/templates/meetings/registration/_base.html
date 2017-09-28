@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>
+      Registration for {{ g.meeting.acronym }} - {{ g.meeting.title|striptags }}
+    </title>
+
+    {% assets "registration_css" %}
+      <link rel="stylesheet" href="{{ ASSET_URL }}">
+    {% endassets %}
+
+    {% block head %}{% endblock %}
+
+  </head>
+
+  <body>
+    <div class="container content">
+      {% block content %}{% endblock %}
+    </div>
+
+    {% assets "registration_js" %}
+      <script src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    {% block scripts %}{% endblock %}
+  </body>
+
+</html>

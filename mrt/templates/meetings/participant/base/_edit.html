@@ -1,0 +1,150 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb, form_group, custom_fields_box_edit %}
+
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block scripts %}
+
+  <script>
+    $(function () {
+      var search_default_participant = $('#search-default-participant');
+      var search_default_participant_empty_template = [
+          '<div class="tt-suggestion">',
+          '<small><em>No participants found</em></small>',
+          '</div>'
+      ].join('\n');
+
+      var searchDefaultSelected = function (e, suggestion, name) {
+          if(suggestion && suggestion.email) {
+              $.each(suggestion, function (key, value) {
+                var input = $('#' + key);
+                if(input.attr('type') == 'checkbox') {
+                  input.prop('checked', value)
+                } else {
+                  input.val(value);
+                }
+              });
+          }
+      }
+
+      var searchDefault = new Bloodhound({
+          datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+          queryTokenizer: Bloodhound.tokenizers.whitespace,
+          remote: search_default_participant.attr('action') + '?search=%QUERY'
+      });
+      searchDefault.initialize();
+      search_default_participant.find('input').typeahead(null, {
+          name: 'search',
+          displayKey: 'value',
+          source: searchDefault.ttAdapter(),
+          templates: {
+              empty: search_default_participant_empty_template
+          }
+      }).on('typeahead:selected', searchDefaultSelected);
+
+      $('.trash-doc').on('click', function () {
+        var msg = $(this).data("message");
+        var $parents = $(this).parents('.current-file');
+        if (confirm(msg)) {
+            var url = $(this).data("href");
+            $.ajax({
+                type: "DELETE",
+                url: url,
+                success: function (resp) {
+                  $parents.remove();
+                }
+            });
+        }
+      });
+    });
+  </script>
+
+{% endblock %}
+
+
+{% block head %}
+
+<style type="text/css">
+  .form-default-search {
+    position: relative;
+    top: 20px;
+    margin-left: 20px;
+  }
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+  {% if not disable_super %}
+    {{ super() }}
+  {% endif %}
+
+
+  <div class="clearfix">
+    <div class="pull-left">
+      <h3 class="page-title">{{ title }}</h3>
+    </div>
+
+    {% if not participant %}
+    <div class="pull-left">
+      <form class="form-inline form-search form-default-search"
+            id="search-default-participant"
+            action="{{ search_default_url }}">
+        <div class="form-group">
+          <span class="glyphicon glyphicon-search"></span>
+          <input type="text" name="search-default"
+                 class="form-control input-sm"
+                 placeholder="Search for default participant"
+                 tabindex="2">
+        </div>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+
+  <form class="form-horizontal" method="post"
+        enctype="multipart/form-data">
+
+    <div class="row">
+
+      <div class="col-sm-9">
+        <div class="panel panel-default">
+          <div class="panel-heading"><b>Participant details</b></div>
+          <div class="panel-body">
+            {% for field in form.exclude([CustomField.CHECKBOX,
+                                          CustomField.IMAGE,
+                                          CustomField.EVENT]) %}
+              {% if loop.first %}
+                {% set options = {'autofocus': '' } %}
+              {% else %}
+                {% set options = {} %}
+              {% endif %}
+              {{ form_group(field, label_size="3", input_size="8",
+                            options=options) }}
+            {% endfor %}
+          </div>
+        </div> {# panel #}
+
+      </div> {# col-sm-9 #}
+
+      {{ custom_fields_box_edit(form, CustomField.CHECKBOX, 'Flags')}}
+
+      {{ custom_fields_box_edit(form, CustomField.EVENT, 'Events')}}
+
+    </div> {# row #}
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        Save changes</button>
+
+      {% block footer %}{% endblock %}
+
+    </div>
+
+  </form>
+
+{% endblock %}

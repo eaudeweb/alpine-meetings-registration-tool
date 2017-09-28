@@ -1,0 +1,127 @@
+{% from "_bits.html" import flashed_messages %}
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>
+      {% block title %}{% endblock %} - {{ config.PRODUCT_TITLE }}
+    </title>
+
+    {% assets "css" %}
+      <link rel="stylesheet" href="{{ ASSET_URL }}">
+    {% endassets %}
+
+    {% block head %}{% endblock %}
+
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-default" role="navigation">
+
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand"
+             href="{{ url_for('meetings.home') }}">
+            {{ config.PRODUCT_TITLE }}</a>
+        </div>
+
+        <div class="navbar-left">
+          {% block breadcrumb %}{% endblock %}
+        </div>
+
+        <ul class="nav navbar-nav navbar-right">
+          {% if current_user.is_authenticated %}
+            <li>
+              <a class="dropdown-toggle" data-toggle="dropdown">
+                {{ current_user }} <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li>
+                  <a href="{{ url_for('auth.change_password') }}">
+                    Change Password</a>
+                </li>
+                <li>
+                  <a href="{{ url_for('auth.logout') }}">Logout</a>
+                </li>
+              </ul>
+            </li>
+          {% endif %}
+          <li class="{{ active('/meetings') }}">
+            <a href="{{ url_for('meetings.home') }}">
+              Meetings</a>
+          </li>
+          {% if current_user.is_superuser %}
+            <li class="{{ active('/admin') }} dropdown" id="admin_dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown">
+                Admin <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu" role="menu">
+                <li class="{{ active('/admin/categories') }}">
+                  <a href="{{ url_for('admin.categories') }}">
+                    Default Categories</a>
+                </li>
+                <li class="{{ active('/admin/fields') }}">
+                  <a href="{{ url_for('admin.custom_fields') }}">
+                    Default Custom Fields</a>
+                </li>
+                <li class="{{ active('/admin/phrases') }}">
+                  <a href="{{ url_for('admin.phrases') }}">
+                    Default Phrases</a>
+                </li>
+                <li class="{{ active('/admin/meeting-types') }}">
+                  <a href="{{ url_for('admin.meeting_types') }}">
+                    Meeting Types</a>
+                </li>
+                <li class="{{ active('/admin/staff') }}">
+                  <a href="{{ url_for('admin.staff') }}">
+                    Staff</a>
+                </li>
+                <li class="{{ active('/admin/roles') }}">
+                  <a href="{{ url_for('admin.roles') }}">
+                    Roles</a>
+                </li>
+                <li class="{{ active('/admin/users') }}">
+                  <a href="{{ url_for('admin.users') }}">
+                    Users</a>
+                </li>
+                <li class="{{ active('/admin/settings') }}">
+                  <a href="{{ url_for('admin.settings') }}">
+                    Settings</a>
+                </li>
+              </ul>
+            </li>
+          {% endif %}
+        </ul>
+
+      </div> {# container#}
+
+    </nav>
+
+    <div class="container">
+      {% block messages %}{{ flashed_messages() }}{% endblock %}
+      {% block content %}{% endblock %}
+    </div>
+
+    {% assets "js" %}
+      <script src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+    {% block scripts %}{% endblock %}
+
+    {% if config.GOOGLE_ANALYTICS_KEY %}
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create','{{ config.GOOGLE_ANALYTICS_KEY }}', 'auto');
+        ga('send', 'pageview');
+      </script>
+    {% endif %}
+
+  </body>
+
+</html>

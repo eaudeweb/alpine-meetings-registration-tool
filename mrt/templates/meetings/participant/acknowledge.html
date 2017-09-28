@@ -1,0 +1,96 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb, form_group %}
+
+
+{% set title = 'Send acknowledge email to: ' ~ participant.name %}
+
+
+{% set participant_url = url_for('meetings.participant_detail',
+                                 participant_id=participant.id) %}
+
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      (url_for('meetings.participants'), 'Participants'),
+      (participant_url, participant.name),
+      ('', 'Acknowledge email')
+  ] ) }}
+
+{% endblock %}
+
+
+{% block head %}
+
+  <style type="text/css">
+    .participant-language {
+      text-transform: uppercase;
+      position: absolute;
+      background: #333;
+      padding: 3px 8px;
+      color: #fff;
+      right: 0;
+    }
+  </style>
+
+{% endblock %}
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <h3 class="page-title">{{ title }}</h3>
+
+  <form class="form-horizontal" method="post">
+
+    <div class="row">
+
+      <div class="col-sm-12">
+
+        <div class="panel panel-default">
+
+          <div class="panel-body">
+
+            <div class="participant-language" title="Participant working language" data-toggle="tooltip" data-placement="top"
+            data-container="body">
+              <small>{{ language }}</small>
+            </div>
+
+            {{ form_group(form.to, label_size="2", input_size="6") }}
+            {{ form_group(form.subject, label_size="2", input_size="6",
+                          options={"autofocus": ""}) }}
+
+            <div class="row attachment">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-6">
+                <a href="{{ url_for('.participant_acknowledge_pdf',
+                                    participant_id=participant.id) }}">
+                <span class="label label-info">
+                  <span class="glyphicon glyphicon-paperclip"></span>
+                  &nbsp;{{ gettext('Details of registration') }}.pdf</span></a>
+              </div>
+            </div> {# row #}
+            {{ form_group(form.message, label_size="2", input_size="6",
+                          options={"rows": "10"}) }}
+
+          </div>
+        </div> {# panel #}
+
+      </div> {# col-sm-12 #}
+
+    </div> {# row #}
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        Send email</button>
+      <small>or
+        <a href="{{ participant_url }}">Cancel</a></small>
+    </div>
+
+  </form>
+
+{% endblock %}

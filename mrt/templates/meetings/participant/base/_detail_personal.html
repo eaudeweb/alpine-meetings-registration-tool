@@ -1,0 +1,19 @@
+
+<h5>Participant details</h5>
+
+<div class="table-responsive">
+
+  <table class="table table-bordered table-condensed table-striped">
+    <tbody>
+      {% for field in form.exclude([CustomField.CHECKBOX,
+                                    CustomField.IMAGE,
+                                    CustomField.EVENT]) %}
+        <tr id="row-{{ field.id }}">
+          <th class="col-sm-3">{{ field.label.text }}</th>
+          <td>{{ field.render_data() }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div> {# table-responsive #}

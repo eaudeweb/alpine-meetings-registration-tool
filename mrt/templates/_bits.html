@@ -1,0 +1,344 @@
+{% macro form_group(field, label_size="2", input_size="8", class_="", options={}) %}
+
+  {% if field.type == 'HiddenField' %}
+
+    {{ field(class_=cls, **options) }}
+
+  {% else %}
+
+    {% set label_cls = "col-sm-" + label_size  + " control-label" %}
+
+    <div class="form-group {% if field.errors %}has-error{% endif %}">
+      <label class="{{ label_cls }}" for="{{ field.id }}">
+        {{ field.label.text }}
+        {% if field.flags.required %}
+          <span class="text-danger">*</span>
+        {% endif %}
+      </label>
+      {% if field.type not in (
+          'CustomImageField', 'CustomDocumentField', 'BooleanField', 'CustomBooleanField', 'CustomMultiCheckboxField',
+          'CustomRadioField', 'RadioField', 'MeetingSettingsField',
+          'CategoryField') and not css_clean %}
+        {% set cls = "form-control " + class_ %}
+      {% else %}
+        {% set cls = class_ %}
+      {% endif %}
+      <div class="col-sm-{{ input_size }}">
+        {{ field(class_=cls, placeholder=field.label.text, **options) }}
+        {% if field.description %}
+          <div class="help-block">
+            {% if g.language_verbose %}
+              {{ field.description[g.language_verbose]
+                  |clean_html(attributes={'a': ['href', 'target']}) }}
+            {% else %}
+              {{ field.description }}
+            {% endif %}
+          </div>
+        {% endif %}
+        {% if field.errors %}
+          <div class="text-danger"><small>{{ field.errors[0] }}</small></div>
+        {% endif %}
+      </div>
+    </div> {# form-group #}
+
+  {% endif %}
+
+{% endmacro %}
+
+
+{% macro static_form_group(label, value) %}
+
+  <div class="form-group">
+    <label class="col-sm-2 control-label"> {{ label }} </label>
+
+    <div class="col-sm-10">
+      <p class="form-control-static">{{ value }}</p>
+    </div>
+  </div> {# form-group #}
+
+{% endmacro %}
+
+
+{% macro breadcrumb(crumbs) %}
+
+  <ol class="breadcrumb">
+    {% for crumb in crumbs %}
+      <li class="{% if loop.last %}active{% endif %}">
+        {% if not loop.last %}
+          <a href="{{ crumb[0] }}">{{ crumb[1] }}</a>
+        {% else %}
+         {{ crumb[1] }}
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ol>
+
+{% endmacro %}
+
+
+{% macro row_link(link) %}
+
+  <div class="row-link">
+    <a href="{{ link[0] }}" class="label label-danger">
+      {{ link[1] }}</a>
+  </div>
+
+{% endmacro %}
+
+
+{% macro activity_url(activity) %}
+
+  {% if activity.participant.deleted %}
+
+    <div class="delete">
+      <span class="label label-danger">deleted</span> <br>
+      <a data-toggle="restore"
+         data-href="{{ url_for('.participant_restore', participant_id=activity.participant.id) }}"
+         data-message="Are you sure you want to restore this participant?">Restore
+      <small style="position:relative; right: -2px;">
+        <span class="glyphicon glyphicon-repeat"></span>
+      </small></a> /
+      <a data-toggle="delete"
+        data-href="{{ url_for('.participant_permanently_delete', participant_id=activity.participant.id) }}"
+        data-message="Are you sure you want to permanently delete this participant?">
+        Permanently delete</a>
+    </div>
+
+  {% else %}
+
+    {% set url = activity.participant.get_absolute_url() %}
+    <a href="{{ url }}">
+      <span class="glyphicon glyphicon-arrow-right"></span>
+    </a>
+
+  {% endif %}
+
+{% endmacro %}
+
+
+{% macro flashed_messages() -%}
+
+  {% for categ, msg in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{ categ }} center-block" role="alert">
+      {{ msg|safe }}</div>
+  {% endfor %}
+
+{%- endmacro %}
+
+
+{% macro list_inputs(inputs) %}
+
+  <ul class="list-unstyled row">
+    {% for input in inputs %}
+      <li class="col-sm-{{ (12 / inputs|length) | int }}">
+        {{ input.label }}
+        {% if input.flags.required %}
+          <span class="text-danger">*</span>
+        {% endif %}
+        {{ input(class_="form-control",
+                 placeholder=input.label.text) }}
+        {% if input.errors %}
+          <div class="text-danger">
+            <small>{{ input.errors[0] }}</small>
+          </div>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+
+{% endmacro %}
+
+
+{% macro form_group_with_list_inputs(field, label_size="2",
+                                     input_size="8") %}
+
+  {% set label_cls = "col-sm-" + label_size  + " control-label" %}
+
+  <div class="form-group {% if field.errors %}has-error{% endif %}">
+    <label class="{{ label_cls }}" for="{{ field.id }}">
+      {{ field.label.text }}
+      {% if field.flags.required %}
+        <span class="text-danger">*</span>
+      {% endif %}
+    </label>
+
+    <div class="col-sm-{{ input_size }}">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          {{ list_inputs(field.translations) }}
+        </div>
+      </div>
+    </div>
+  </div> {# form-group #}
+
+{% endmacro %}
+
+
+{% macro render_pagination(pagination, endpoint, extra={}) %}
+
+  <ul class="pagination">
+
+    {% if pagination.has_prev %}
+      <li><a href="{{ url_for(endpoint,
+                              page=pagination.prev().page,
+                              **extra) }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><a>&laquo;</a></li>
+    {% endif %}
+
+    {%- for page in pagination.iter_pages() %}
+      {% if page %}
+        {% if page != pagination.page %}
+          <li>
+            <a href="{{ url_for(endpoint, page=page, **extra) }}">
+              {{ page }}</a>
+          </li>
+        {% else %}
+          <li class="active"><a>{{ page }}</a></li>
+        {% endif %}
+      {% else %}
+        <li class="disabled">
+          <span class="ellipsis">…</span>
+        </li>
+      {% endif %}
+
+    {%- endfor %}
+
+    {% if pagination.has_next %}
+      <li><a href="{{ url_for(endpoint,
+                              page=pagination.next().page,
+                              **extra) }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><a>&raquo;</a></li>
+    {% endif %}
+
+  </ul>
+
+{% endmacro %}
+
+
+{% macro meeting_title_for_printouts() %}
+
+  {{ g.meeting.title|clean_html(tags='sup') }} <br>
+  {{ g.meeting.venue_city.english }}
+  ({{ g.meeting.venue_country }}) {{ g.meeting.venue_state }},
+  {{ date_processor(g.meeting.date_start, g.meeting.date_end) }}
+
+{% endmacro %}
+
+
+{% macro custom_fields_box_edit(form, field_type, title) %}
+
+  {% if form.has(field_type) %}
+    <div class="col-sm-3">
+      <div class="panel panel-default">
+        <div class="panel-heading"><b>{{ title }}</b></div>
+        <div class="panel-body" id="{{ title }}">
+          {% for field in form.filter([field_type]) %}
+            {{ form_group(field, label_size="6", input_size="6") }}
+          {% endfor %}
+        </div>
+      </div> {# panel #}
+    </div> {# col-sm-3 #}
+  {% endif %}
+
+{% endmacro %}
+
+
+{% macro custom_fields_box_view(form, field_type, title) %}
+
+  {% if form.has(field_type) %}
+    <h5>{{ title }}</h5>
+    <div class="table-responsive">
+      <table class="table table-bordered table-condensed table-striped"
+             id="{{ title }}">
+        <tbody>
+          {% for field in form.filter([field_type]) %}
+            <tr>
+              <th class="col-sm-5">{{ field.label.text }}</th>
+              <td>
+                {% if field.data %}
+                  <span class="glyphicon glyphicon-ok"></span>
+                {% else %}
+                  <span class="glyphicon glyphicon-minus"></span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div> {# table-responsive #}
+  {% endif %}
+
+{% endmacro %}
+
+{% macro event_fields_box_view(form, field_type, title) %}
+
+  {% if form.has(field_type) %}
+    <h5>{{ title }}</h5>
+    <div class="table-responsive">
+      <table class="table table-bordered table-condensed table-striped"
+             id="{{ title }}">
+        <tbody>
+          {% for field in form.filter([field_type]) %}
+            {% if field.data %}
+            <tr>
+              <th class="col-sm-5">{{ field.label.text }}</th>
+            </tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div> {# table-responsive #}
+  {% endif %}
+
+{% endmacro %}
+
+
+{% macro form_printout_field(field, action_url) %}
+  <div class="form-group {% if field.errors %}has-error{% endif %}">
+    <label class="col-sm-2 control-label" for="{{ field.id }}">
+      {{ field.label.text }}
+    </label>
+
+    <div class="col-sm-3">
+      {{ field(class_="form-control") }}
+      {% if field.errors %}
+        <div class="text-danger"><small>{{ field.errors[0] }}</small></div>
+      {% endif %}
+    </div>
+
+    <div class="actions">
+      <a href="{{ action_url }}">
+        <span class="glyphicon glyphicon-plus"></span>
+        Add a new custom field
+      </a>
+    </div>
+  </div>
+
+{% endmacro %}
+
+
+{% macro actions(type) %}
+
+    <div class="actions">
+        {% set url = url_for('.custom_field_edit', custom_field_type=type) %}
+        <a href="{{ url }}" class="btn btn-primary btn-sm">
+        <span class="glyphicon glyphicon-pencil"></span> &nbsp;
+        Add a new field</a>
+    </div> {# actions #}
+
+{% endmacro %}
+
+
+{% macro meeting_title_all_languages() %}
+  {% for language in config.TRANSLATIONS %}
+  <div class="row printout-meeting-title">
+    {{ g.meeting.title|clean_html(tags='sup') }} <br>
+    {{ g.meeting.venue_city[language] }}
+    ({{ g.meeting.venue_country }}) {{ g.meeting.venue_state }},
+    {{ date_processor(g.meeting.date_start, g.meeting.date_end, locale=LANGUAGES_MAP[language]) }}
+  </div>
+  {% endfor %}
+{% endmacro %}
+

@@ -1,0 +1,103 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb, form_group %}
+
+
+{% set title = "Overview" %}
+
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block breadcrumb %} {{ breadcrumb([('', title)]) }} {% endblock %}
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <h3 class="page-title">{{ title }}</h3>
+
+
+  <table class="table bg-warning">
+
+    <tbody>
+      {% if g.meeting.online_registration %}
+        <tr>
+          <td><h4>Participant registration form</h4></td>
+          <td>
+            {% block registration_url %}
+              {% set url = url_external('meetings.registration') %}
+              <h4><a href="{{ url }}">{{ url }}</a></h4>
+            {% endblock %}
+          </td>
+        </tr>
+      {% endif %}
+
+      {% if g.meeting.media_participant_enabled %}
+        <tr>
+          <td><h4>Media Participant registration form</h4></td>
+          <td>
+            {% block media_registration_url %}
+              {% set url = url_external('meetings.media_registration') %}
+              <h4><a href="{{ url }}">{{ url }}</a></h4>
+            {% endblock %}
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+
+  </table>
+
+  <div class="row">
+    <div class="col-sm-5">
+      {% if participant_categories.count() %}
+      <table class="table table-bordered">
+        <thead>
+          <tr class="row">
+            <th class="col-sm-6">Categories</th>
+            <th class="col-sm-4">Data type</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+
+        {% for category in participant_categories %}
+          <tr class="row">
+            <th rowspan="2" class="col-sm-6">{{ category.title.english }}</th>
+            <td class="col-sm-4">Countries</td>
+            <td>{{ category.participants.filter_by(deleted=False)|countries|length }}</td>
+          </tr>
+
+          <tr class="row">
+            <td class="col-sm-4">Delegates</td>
+            <td>{{ category.participants.filter_by(deleted=False).count() }}</td>
+          </tr>
+        {% endfor %}
+
+      </table>
+      {% endif %}
+    </div>
+
+    <div class="col-sm-4 col-sm-offset-1">
+      {% if media_categories.count() %}
+      <table class="table table-bordered">
+        <thead>
+          <tr class="row">
+            <th class="col-sm-8">Media categories</th>
+            <th class="col-sm-4">Total</th>
+          </tr>
+        </thead>
+
+        {% for category in media_categories %}
+
+        <tr class="row">
+          <td class="col-sm-8">{{ category.title.english }}</td>
+          <td class="col-sm-4">{{ category.participants.filter_by(deleted=False).count() }}</td>
+        </tr>
+
+        {% endfor %}
+
+      </table>
+      {% endif %}
+    </div>
+  </div>
+
+{% endblock %}

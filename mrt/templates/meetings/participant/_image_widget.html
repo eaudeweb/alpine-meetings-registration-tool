@@ -1,0 +1,62 @@
+{% set edit_url = url_for('.custom_field_upload',
+                          participant_id=participant.id,
+                          field_slug=field.name) %}
+{% set rotate_url = url_for('.custom_field_rotate',
+                            participant_id=participant.id,
+                            field_slug=field.name) %}
+{% set crop_url = url_for('.custom_field_crop',
+                          participant_id=participant.id,
+                          field_slug=field.name) %}
+
+<div class="image-widget">
+
+  <div class="thumbnail">
+
+    <h4 class="text-center">{{ field.label.text }}</h4>
+
+    <div class="image-container">
+      {% with data=field.data %}
+        {% include "meetings/custom_field/_image_widget.html" %}
+      {% endwith %}
+    </div>
+
+    <div class="caption text-center">
+
+      <div class="btn-group">
+        <button class="btn btn-primary btn-sm change-photo">
+          <span class="glyphicon glyphicon-picture"></span> &nbsp;
+          Change photo</button>
+
+        <button class="btn btn-danger btn-sm remove-photo {% if not field.data %}disabled{% endif %}"
+            data-url="{{ edit_url }}"
+            data-message="Are you sure you want to delete this photo?">
+          <span class="glyphicon glyphicon-remove"></span> &nbsp;
+          Remove</button>
+
+        <button class="btn btn-default btn-sm rotate-photo {% if not field.data %}disabled{% endif %}"
+            data-url="{{ rotate_url }}">
+          <span class="glyphicon glyphicon-refresh"></span>
+        </button>
+
+        <button class="btn btn-default btn-sm crop-photo {% if not field.data %}disabled{% endif %}"
+                data-url="{{ crop_url }}">
+          <span class="glyphicon glyphicon-resize-full"></span>
+        </button>
+      </div> {# btn-group #}
+
+      <div class="fileinput text-center hide">
+        <div class="loading hide">
+          <img src="/static/images/ajax.gif" width="24" height="24"
+               alt="loading">
+        </div>
+        <form action="{{ edit_url }}" method="post"
+              enctype="multipart/form-data">
+          {{ field(class_="image-upload") }}
+          <div class="text-danger"></div>
+        </form>
+      </div> {# fileinput #}
+
+    </div> {# caption #}
+
+  </div> {# thumbnail #}
+</div>

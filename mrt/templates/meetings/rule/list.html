@@ -1,0 +1,44 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb %}
+
+
+{% set title = "Rules" %}
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block breadcrumb %} {{ breadcrumb([('', 'Rules'),]) }} {% endblock %}
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <h3 class="page-title">
+    {{ title }} <br>
+    <small>These rules apply to the Participant Registration Form. When given conditions are met on some form fields, actions (such as "make mandatory" or "display") are applied to other fields.</small>
+  </h3>
+
+  <div role="tabpanel">
+    <ul class="nav nav-tabs" id="nav_tabs">
+      <li class="active">
+        <a href="#participant" data-toggle="tab">Participant rules</a>
+      </li>
+      <li>
+        <a href="#media" data-toggle="tab">Media participant rules</a>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="participant">
+        {% with rules=participant_rules, rule_type='participant' %}
+          {% include "meetings/rule/_table.html" %}
+        {% endwith %}
+      </div>
+      <div role="tabpanel"  class="tab-pane" id="media">
+        {% with rules=media_rules, rule_type='media' %}
+          {% include "meetings/rule/_table.html" %}
+        {% endwith %}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

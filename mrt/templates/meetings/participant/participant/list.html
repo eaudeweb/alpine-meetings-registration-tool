@@ -1,0 +1,103 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb %}
+
+
+{% block title %}List of participants{% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      ('', 'Participants')
+  ] ) }}
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+
+    $(function () {
+      var participants =  $("#participants");
+      var pTable = participants.dataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": participants.data("ajax"),
+        "bFilter": true,
+        "sDom": '<"row"<"col-xs-6"l><"#custom-search.col-xs-6">>t<"row"<"col-xs-6"i><"col-xs-6"p>>',
+        "columns": [
+            { "data": "last_name" },
+            { "data": "category_id" },
+            { "data": "representing" },
+            { "data": "registration_date", "className": "text-center" },
+            { "data": "attended", "className": "text-center" },
+            { "data": "verified", "className": "text-center" },
+            { "data": "credentials", "className": "text-center" }
+        ],
+      });
+
+
+      var filter_box = $("#filter-participants input");
+      var do_filter = function() { pTable.fnFilter(filter_box.val()); };
+      filter_box.unbind("keyup").bind("keyup", $.debounce(do_filter, 300));
+      var filter = $("#filter-participants").detach();
+      $("#custom-search").append(filter);
+      do_filter();
+    });
+  </script>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <div class="table-responsive">
+
+    <table id="participants"
+           class="table table-bordered table-condensed table-striped"
+           data-ajax="{{ url_for('.participants_filter') }}">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Representing</th>
+          <th>Date of registration</th>
+          <th>{{ form.attended.label.text }}</th>
+          <th>{{ form.verified.label.text }}</th>
+          <th>{{ form.credentials.label.text }}</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+  </div> {# table-responsive #}
+
+  {% if has_perm('manage_participant') %}
+    <div class="actions">
+      <form method="POST" action="{{ url_for('.participants_export') }}">
+        <a href="{{ url_for('.participant_edit') }}"
+           class="btn btn-primary btn-sm"
+           id="participant_add">
+          <span class="glyphicon glyphicon-plus"></span>
+          Add a new participant
+        </a>
+
+        <button class="btn btn-sm btn-default" type="submit">Export to excel</button>
+      </form>
+    </div>
+  {% endif %}
+
+  <div class="hidden">
+    {% if has_perm('view_participant') %}
+      <div class="form-inline form-search pull-right" id="filter-participants">
+        <div class="form-group">
+          <span class="glyphicon glyphicon-search"></span>
+          <input type="text" name="search" class="form-control input-sm" value="{{ search }}" placeholder="Search for participants" tabindex="1">
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+{% endblock %}

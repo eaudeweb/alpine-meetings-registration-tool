@@ -1,0 +1,50 @@
+{% extends "meetings/registration/_base.html" %}
+{% from "_bits.html" import form_group %}
+
+
+{% block content %}
+
+  <div class="text-center">
+    <h2>{{ gettext('Thank you for submitting your registration information.')}}</h2>
+    <h4>{{ phrases['success_phrase'].description[g.language_verbose] }}</h4>
+  </div>
+
+  {% if not current_user.is_authenticated and g.meeting.login_button_visible %}
+    <form method="post" class="form-horizontal" style="margin-top: 45px;"
+          action="{{ url_for('meetings.registration_user') }}">
+
+      <div class="row">
+
+        <div class="col-sm-6 col-sm-push-3">
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <b>{{ phrases['user_phrase'].description[g.language_verbose] }}</b>
+            </div>
+
+            <div class="panel-body">
+
+              {{ form_group(form.email, label_size="4", options={'autofocus': ''}) }}
+              {{ form_group(form.password, label_size="4") }}
+              {{ form_group(form.confirm, label_size="4") }}
+
+              <div class="row">
+                <div class="col-sm-8 col-sm-push-4">
+                  <button type="submit" class="btn btn-primary">
+                    {{ gettext('Create account') }}
+                  </button>
+                </div>
+              </div>
+
+            </div> {# panel-body #}
+
+          </div> {# panel #}
+
+        </div> {# col-sm-6#}
+
+      </div> {# row#}
+
+    </form>
+  {% endif %}
+
+{% endblock %}

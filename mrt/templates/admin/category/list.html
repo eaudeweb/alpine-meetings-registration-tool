@@ -1,0 +1,79 @@
+{% extends "_layout.html" %}
+{% from "_bits.html" import breadcrumb %}
+
+
+{% block title %}Default Categories{% endblock %}
+
+
+{% block scripts %}
+
+  <script>
+    $(function () {
+      $('#categories').dataTable({
+        'order': [],
+        'columnDefs': [
+          { 'orderable': false, 'targets': 0 },
+          { 'orderable': false, 'targets': 2 },
+          { 'orderable': false, 'targets': 3 },
+          { 'orderable': false, 'targets': 6 }
+        ]
+      });
+    });
+  </script>
+
+{% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [('', 'Default Categories')] ) }}
+
+{% endblock %}
+
+
+{% block content %}
+
+  <div class="page-header">
+    <h2>Default Categories</h2>
+  </div>
+
+  <div role="tabpanel">
+
+    <ul class="nav nav-tabs meeting-navs" id="nav_tabs">
+      <li class="active">
+        <a href="#categories_list" data-toggle="tab">Categories</a>
+      </li>
+      <li>
+        <a href="#tags" data-toggle="tab">Category tags</a>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+
+      <div role="tabpanel" class="tab-pane active" id="categories_list">
+        {% with default = True %}
+          {% include "common/_category_list.html"  %}
+        {% endwith %}
+
+        <div class="actions">
+          <a href="{{ url_for('.category_edit') }}"
+             class="btn btn-primary btn-sm">
+            <span class="glyphicon glyphicon-plus"></span>
+            Add a new category</a>
+        </div>
+      </div>
+
+      <div role="tabpanel" class="tab-pane" id="tags">
+        {% include "common/_category_tag_list.html"  %}
+        <div class="actions">
+          <a href="{{ url_for('.category_tag_edit') }}"
+             class="btn btn-primary btn-sm">
+            <span class="glyphicon glyphicon-plus"></span>
+            Add a new category tag</a>
+        </div>
+
+      </div>
+
+  </div>
+
+{% endblock %}

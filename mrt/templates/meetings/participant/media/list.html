@@ -1,0 +1,74 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb %}
+
+
+{% block title %}List of media participants{% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      ('', 'Media Participants')
+  ] ) }}
+
+{% endblock %}
+
+
+{% block scripts %}
+
+  <script>
+    $(function () {
+      var participants = $("#media_participants");
+      participants.dataTable({
+        "processing": true,
+        "serverSide": true,
+        "ajax": participants.data("ajax"),
+        "columns": [
+            { "data": "last_name" },
+            { "data": "registration_date", "className": "text-center" },
+            { "data": "verified", "className": "text-center" }
+        ]
+      });
+    });
+  </script>
+
+{% endblock %}
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <div class="table-responsive">
+
+    <table id="media_participants"
+           class="table table-bordered table-condensed table-striped"
+           data-ajax="{{ url_for('.media_participants_filter') }}">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date of registration</th>
+          <th>{{ form.verified.label.text }}</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+  </div> {# table-responsive #}
+
+  {% if has_perm('manage_media_participant') %}
+    <div class="actions">
+      <form method="POST" action="{{ url_for('.media_participants_export') }}">
+        <a href="{{ url_for('.media_participant_edit') }}"
+           class="btn btn-primary btn-sm"
+           id="media_participant_add">
+          <span class="glyphicon glyphicon-plus"></span>
+          Add a new media participant
+        </a>
+
+        <button class="btn btn-sm btn-default" type="submit">Export to excel</button>
+      </form>
+    </div>
+  {% endif %}
+
+{% endblock %}

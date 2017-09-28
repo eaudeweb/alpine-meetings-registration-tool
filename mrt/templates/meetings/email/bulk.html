@@ -1,0 +1,116 @@
+{% extends "meetings/_base.html" %}
+{% from "_bits.html" import breadcrumb, form_group %}
+
+
+{% set title = 'Send bulk emails' %}
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [
+      ('', 'Bulk emails')
+  ] ) }}
+
+{% endblock %}
+
+
+{% block head %}
+
+  <style type="text/css">
+    .form-control.select {
+      border: none!important;
+      -webkit-box-shadow: none!important;
+      box-shadow: none!important;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+{% endblock %}
+
+
+{% block scripts %}
+  <script>
+  $(function () {
+      function update_count() {
+        var language =  $("#language").val();
+        var categories =  $("#categories").val();
+        var participant_type = $("#participant_type").val()
+
+        var data = {'language': language,
+                    'categories': categories,
+                    'participant_type': participant_type};
+        var url = "{{ url_for('.recipients_count') }}";
+        $.get(url, data, function (resp) {
+          $('#recipients-count').html(resp);
+          $('#recipients-view').data('info', data);
+        });
+      }
+      $('.email-filters').change(update_count);
+      $('#recipients-view').on('click', function () {
+        var data = $(this).data('info');
+        var url = $(this).data('href') + '?' + $.param(data);
+        window.open(url, '_blank');
+      });
+      update_count();
+    }
+  )
+  </script>
+{% endblock %}
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <h3 class="page-title">{{ title }}</h3>
+
+  <form class="form-horizontal" method="post">
+
+    <div class="row">
+
+      <div class="col-sm-12">
+
+        <div class="panel panel-default">
+
+          <div class="panel-heading">
+            <b>Recipients</b> (<span id="recipients-count">-</span>)
+            &mdash;
+            <a data-href="{{ url_for('.recipients') }}"
+               id="recipients-view" data-info="{}">
+              preview recipients</a>
+          </div>
+
+          <div class="panel-body">
+            {{ form_group(form.language, label_size="2", input_size="3",
+                          class_="email-filters") }}
+            {{ form_group(form.categories, label_size="2", input_size="6",
+                          class_="email-filters form-control select") }}
+            {{ form_group(form.participant_type,
+                          label_size="2",input_size="3",
+                          class_="email-filters") }}
+          </div>
+
+          <div class="panel-heading"><b>Message</b></div>
+
+          <div class="panel-body">
+            {{ form_group(form.subject, label_size="2", input_size="6",
+                          options={"autofocus": ""}) }}
+            {{ form_group(form.message, label_size="2", input_size="6",
+                          options={"rows": "10"}) }}
+          </div>
+        </div> {# panel #}
+
+      </div> {# col-sm-12 #}
+
+    </div> {# row #}
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        Send emails</button>
+    </div>
+
+  </form>
+
+{% endblock %}

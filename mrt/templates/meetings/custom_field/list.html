@@ -1,0 +1,81 @@
+{% extends "meetings/_base.html" %}
+{% from "meetings/custom_field/_bits.html" import render_fields %}
+{% from "_bits.html" import breadcrumb, actions %}
+
+
+{% set title = "Fields" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+
+{% block breadcrumb %}
+
+  {{ breadcrumb( [ ('', title) ] ) }}
+
+{% endblock %}
+
+
+{% block head %}
+
+  <style type="text/css">
+    .tab-content {
+      margin-top: 15px;
+    }
+  </style>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+  <script>
+    $(function () {
+      if (window.location.hash) {
+        var selector = '#nav_tabs a[href="' + window.location.hash + '"]';
+        $(selector).tab('show');
+      }
+    });
+  </script>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+  {{ super() }}
+
+  <h3 class="page-title">{{ title }}</h3>
+
+  <div role="tabpanel">
+
+    <ul class="nav nav-tabs" id="nav_tabs">
+      <li class="active">
+        <a href="#participant" data-toggle="tab">Participant fields</a>
+      </li>
+      {% if custom_fields_for_media %}
+      <li>
+        <a href="#media" data-toggle="tab">Media participant fields</a>
+      </li>
+      {% endif %}
+    </ul>
+
+    <div class="tab-content">
+
+      <div role="tabpanel" class="tab-pane active" id="participant">
+        {{ render_fields(custom_fields_for_participants) }}
+        {{ actions(Participant.PARTICIPANT)}}
+      </div>
+
+      {% if custom_fields_for_media %}
+      <div role="tabpanel" class="tab-pane" id="media">
+        {{ render_fields(custom_fields_for_media) }}
+        {{ actions(Participant.MEDIA)}}
+      </div>
+      {% endif %}
+
+    </div> {# tab-content #}
+
+  </div> {# tabpanel #}
+
+{% endblock %}
