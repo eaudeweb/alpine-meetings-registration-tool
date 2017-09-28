@@ -1,0 +1,58 @@
+SQLALCHEMY_DATABASE_URI = 'postgresql://demo:demo@postgres/meetings'
+SECRET_KEY = 'secret'
+
+
+# Total upload size limit - if total size of all files used in registration
+# exceeds this value the server returns a 413 Request Entity Too Large response
+MAX_UPLOAD_SIZE = 10 * 1024 * 1024
+# Single file size limit - used only in Javascript validation
+MAX_FILE_SIZE = 1 * 1024 * 1024
+
+# Name and title of the product
+PRODUCT_TITLE = 'Meetings'
+
+# Administator's email
+ADMINISTRATOR_EMAIL = ''
+
+# Mail used for sending reset tokens
+DEFAULT_MAIL_SENDER = 'no-reply@eaudeweb.ro'
+# Supress sendding mails on localhost
+MAIL_SUPPRESS_SEND = True
+# Disable assets compilation
+ASSETS_DEBUG = True
+DEBUG = True
+
+# Enable GOOGLE ANALYTICS
+GOOGLE_ANALYTICS_KEY = ''
+
+# Logos filenames; files should be located at project_dir/instance/files/logos/
+PRODUCT_LOGO = 'badge_left_logo.png'
+PRODUCT_SIDE_LOGO = 'badge_right_logo.png'
+BADGE_BACK_LOGO = 'badge_back_logo.png'
+
+# Domain name for correctly displaying registration URLs
+DOMAIN_NAME = ''
+
+# Choose a subset of the available languages: ['english', 'french', 'spanish']
+# TRANSLATIONS = []
+
+# Choose a subset of the available title choices if you don't need all of them:
+# ['Mr', 'Ms', 'Dr', 'Prof']
+# TITLE_CHOICES = []
+
+# URL used by importer for participants photos
+# PHOTOS_BASE_URL = ''
+
+SENTRY_DSN=''
+
+REDIS_URL = "redis://redis:6379/1"
+
+# Custom names for countries not yet updated by Unicode Common Locale Repository
+
+CUSTOMIZED_COUNTRIES = {
+    'KP': {
+        'en': u'Democratic People\u2019s Republic of Korea',
+        'es': u'Rep\u00FAblica Popular Democr\u00E1tica de Corea',
+        'fr': u' R\u00E9publique populaire d\u00E9mocratique de Cor\u00E9e'
+    }
+}
